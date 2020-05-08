@@ -9,20 +9,9 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
   constructor(private router: Router) {}
 
-  items: any[];
+  ngOnInit() {}
 
-  ngOnInit() {
-    this.items = [
-      {
-        label: 'Pages',
-        items: [
-          { label: 'Home', command: () => this.router.navigateByUrl('/home') },
-          {
-            label: 'Users',
-            command: () => this.router.navigateByUrl('/users'),
-          },
-        ],
-      },
-    ];
+  navTo(path: string) {
+    this.router.navigateByUrl(path);
   }
 }

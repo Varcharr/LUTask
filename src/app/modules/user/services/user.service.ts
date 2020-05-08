@@ -17,5 +17,7 @@ export class UserService {
   }
   createUser(user) {
     console.log(user);
+
+    // return this.http.post<{ user: IUser }>('/api/v1/users', user);
   }
 }

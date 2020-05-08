@@ -1,27 +1,19 @@
-<div class="header">
-  <button routerLink="/home">Home</button>
-  <button routerLink="/users">User</button>
-  <button routerLink="/users/new">New User</button>
-</div>
-
-<button
-  mat-icon-button
-  [matMenuTriggerFor]="menu"
-  aria-label="Example icon-button with a menu"
->
-  <mat-icon>more_vert</mat-icon>
-</button>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>dialpad</mat-icon>
-    <span>Redial</span>
-  </button>
-  <button mat-menu-item disabled>
-    <mat-icon>voicemail</mat-icon>
-    <span>Check voice mail</span>
-  </button>
-  <button mat-menu-item>
-    <mat-icon>notifications_off</mat-icon>
-    <span>Disable alerts</span>
-  </button>
-</mat-menu>
+<mat-toolbar color="primary">
+  <span (click)="navTo('/home')">Practical Task</span>
+  <span class="example-fill-remaining-space"></span>
+  <span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="navTo('/home')">
+        <mat-icon>dialpad</mat-icon>
+        <span>Home</span>
+      </button>
+      <button mat-menu-item (click)="navTo('/users')">
+        <mat-icon>voicemail</mat-icon>
+        <span>Users</span>
+      </button>
+    </mat-menu>
+  </span>
+</mat-toolbar>

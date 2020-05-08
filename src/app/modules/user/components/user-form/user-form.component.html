@@ -1,3 +1,45 @@
-<p>
-  user-form works!
-</p>
+<mat-card>
+  <mat-card-title>Create a New User</mat-card-title>
+  <form [formGroup]="userForm" class="user-form" (ngSubmit)="createUser()">
+
+    <mat-form-field appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="first_name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="last_name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="username">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input type="password" matInput placeholder="Placeholder" formControlName="password">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Language</mat-label>
+      <mat-select formControlName="language">
+        <!-- THIS IS JUST TO HAVE SOME DATA -->
+        <!-- IN REAL APP I WOULD USE ENUM -->
+        <!-- AND CREATE OPTIONS USING NGFOR -->
+        <mat-option value="en">English</mat-option>
+        <mat-option value="fr">French</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" [disabled]="userForm.invalid">Create User</button>
+
+  </form>
+</mat-card>
+{{this.userForm.value | json}}

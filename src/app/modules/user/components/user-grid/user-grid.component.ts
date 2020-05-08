@@ -1,18 +1,32 @@
+import { IUser } from './../../models/user';
 import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'user-grid',
   templateUrl: './user-grid.component.html',
-  styleUrls: ['./user-grid.component.css'],
+  styleUrls: ['./user-grid.component.scss'],
 })
 export class UserGridComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   users: any;
   selectedColumns;
+
+  displayedColumns: string[] = ['first_name', 'last_name', 'email'];
+  dataSource: MatTableDataSource<IUser>;
+
   ngOnInit() {
     this.fetchUsers();
+    this.dataSource = new MatTableDataSource(this.users);
+  }
+
+  applyFilter(event: Event) {
+    console.log(this.dataSource);
+
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   fetchUsers() {

@@ -1,0 +1,7 @@
+<user-grid></user-grid>
+<br>
+<button *ngIf="!addNewUser" mat-raised-button color="primary" (click)="addNewUser = true">+ Add User</button>
+<button *ngIf="addNewUser" mat-raised-button color="accent" (click)="addNewUser = false">Cancel User Creation</button>
+<br>
+<br>
+<user-form *ngIf="addNewUser" (onUserCreate)="addNewUser = false"></user-form>
