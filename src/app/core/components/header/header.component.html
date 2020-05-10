@@ -1,19 +1,21 @@
-<mat-toolbar color="primary">
-  <span (click)="navTo('/home')">Practical Task</span>
-  <span class="example-fill-remaining-space"></span>
-  <span>
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="navTo('/home')">
-        <mat-icon>dialpad</mat-icon>
-        <span>Home</span>
+<nav>
+  <mat-toolbar color="primary">
+    <span (click)="navTo('/home')">Practical Task</span>
+    <span class="fill-remaining-space"></span>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <button mat-menu-item (click)="navTo('/users')">
-        <mat-icon>voicemail</mat-icon>
-        <span>Users</span>
-      </button>
-    </mat-menu>
-  </span>
-</mat-toolbar>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="navTo('/home')">
+          <mat-icon>dialpad</mat-icon>
+          <span>Home</span>
+        </button>
+        <button mat-menu-item (click)="navTo('/users')">
+          <mat-icon>voicemail</mat-icon>
+          <span>Users</span>
+        </button>
+      </mat-menu>
+    </span>
+  </mat-toolbar>
+</nav>

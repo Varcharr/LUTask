@@ -2,6 +2,13 @@ import { IUser } from './../../models/user';
 import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { SelectionModel } from '@angular/cdk/collections';
+import {
+  RootStoreState,
+  UserStoreActions,
+  UserStoreSelectors,
+} from '../../../../store';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'user-grid',
@@ -9,26 +16,54 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./user-grid.component.scss'],
 })
 export class UserGridComponent implements OnInit {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private store$: Store<RootStoreState.State>
+  ) {}
 
   users: any;
   selectedColumns;
-
-  displayedColumns: string[] = ['first_name', 'last_name', 'email'];
+  initialSelection = [];
+  allowMultiSelect = true;
+  selection: SelectionModel<IUser>;
+  error$;
   dataSource: MatTableDataSource<IUser>;
+  displayedColumns: string[] = ['select', 'first_name', 'last_name', 'email'];
 
   ngOnInit() {
     this.fetchUsers();
     this.dataSource = new MatTableDataSource(this.users);
+
+    this.selection = new SelectionModel<IUser>(
+      this.allowMultiSelect,
+      this.initialSelection
+    );
+    this.error$ = this.store$.select(UserStoreSelectors.selectUsers);
   }
 
   applyFilter(event: Event) {
-    console.log(this.dataSource);
-
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected == numRows;
+  }
+
+  // Selects all rows if they are not all selected; otherwise clear selection
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
+  }
+  rowSelection() {
+    this.store$.dispatch(
+      new UserStoreActions.GridSelectUsers(this.selection.selected)
+    );
+    console.log('Selection', this.selection);
+  }
   fetchUsers() {
     // this.userService.fetchUsers().subscribe(
     //   (res) => {

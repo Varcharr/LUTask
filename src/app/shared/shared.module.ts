@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { EssentialDirective } from './directives/essential.directive';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,8 +18,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [],
-  declarations: [],
+  declarations: [EssentialDirective],
   exports: [
+    CommonModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
@@ -32,6 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     MatSelectModule,
     MatCheckboxModule,
+    EssentialDirective,
   ],
 })
 export class SharedModule {}
