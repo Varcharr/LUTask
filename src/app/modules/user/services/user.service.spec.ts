@@ -6,7 +6,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { UserService } from './user.service';
-import { IUser } from '../models/user';
+import { User } from '../models/user';
 
 describe('User service', () => {
   let userService: UserService;
@@ -27,7 +27,7 @@ describe('User service', () => {
   });
 
   it('Should get all users from API', () => {
-    const testUsers: IUser[] = [
+    const testUsers: User[] = [
       {
         id: 147370,
         first_name: 'Lili',

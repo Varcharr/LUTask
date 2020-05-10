@@ -13,6 +13,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -21,6 +22,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   declarations: [EssentialDirective],
   exports: [
     CommonModule,
+    ReactiveFormsModule,
+    //Angular Material Components
+    //Can/Should Be a Separated Module
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
@@ -31,9 +35,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatCardModule,
     MatDialogModule,
-    ReactiveFormsModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatSnackBarModule,
+
+    //Directives
     EssentialDirective,
   ],
 })

@@ -5,26 +5,39 @@
     <mat-form-field appearance="outline">
       <mat-label>First Name</mat-label>
       <input matInput formControlName="first_name">
+      <mat-error>First Name is Required</mat-error>
+
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Last Name</mat-label>
       <input matInput formControlName="last_name">
+      <mat-error>Last Name is Required</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Email</mat-label>
       <input matInput placeholder="Placeholder" formControlName="email">
+      <mat-error>Email is Required</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Username</mat-label>
       <input matInput placeholder="Placeholder" formControlName="username">
+      <mat-error>Username is Required</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Password</mat-label>
       <input type="password" matInput placeholder="Placeholder" formControlName="password">
+      <mat-error>
+        <span *ngIf="userForm.get('password')?.errors?.required">
+          Password is Required
+        </span>
+        <span *ngIf="userForm.get('password')?.errors?.minlength">
+          Minimum Pasword Length is 6
+        </span>
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -36,6 +49,7 @@
         <mat-option value="en">English</mat-option>
         <mat-option value="fr">French</mat-option>
       </mat-select>
+      <mat-error>Language is Required</mat-error>
     </mat-form-field>
 
     <button mat-raised-button color="primary" [disabled]="userForm.invalid">Create User</button>

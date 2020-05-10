@@ -11,9 +11,8 @@ describe('FooterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FooterComponent ]
-    })
-    .compileComponents();
+      declarations: [FooterComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -22,7 +21,8 @@ describe('FooterComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should have proper footer content', () => {
+    const footer = fixture.debugElement.query(By.css('footer')).nativeElement;
+    expect(footer.innerHTML).toContain('2020 Learnupon');
   });
 });

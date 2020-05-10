@@ -1,46 +1,75 @@
-import { IUser } from './../../models/user';
+import { User } from './../../models/user';
 import { UserService } from './../../services/user.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import {
-  RootStoreState,
-  UserStoreActions,
-  UserStoreSelectors,
-} from '../../../../store';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
+import { UserState } from 'src/app/store/users-state';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
+import * as UserActions from '../../../../store/users-actions';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'user-grid',
   templateUrl: './user-grid.component.html',
   styleUrls: ['./user-grid.component.scss'],
 })
-export class UserGridComponent implements OnInit {
+export class UserGridComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
-    private store$: Store<RootStoreState.State>
-  ) {}
+    private snackBar: MatSnackBar,
+    private store: Store<{ userState: UserState }>
+  ) {
+    this.users$ = store.pipe(select('userState'));
+  }
 
-  users: any;
-  selectedColumns;
+  users$: Observable<UserState>;
   initialSelection = [];
-  allowMultiSelect = true;
-  selection: SelectionModel<IUser>;
-  error$;
-  dataSource: MatTableDataSource<IUser>;
-  displayedColumns: string[] = ['select', 'first_name', 'last_name', 'email'];
+  userSubscription: Subscription;
+  selection: SelectionModel<User> = new SelectionModel<User>(true, []);
+  dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
+  displayedColumns: string[] = [
+    'select',
+    'first_name',
+    'last_name',
+    'email',
+    'created_at',
+  ];
+  ngrxUsers: User[] = [];
 
   ngOnInit() {
     this.fetchUsers();
-    this.dataSource = new MatTableDataSource(this.users);
-
-    this.selection = new SelectionModel<IUser>(
-      this.allowMultiSelect,
-      this.initialSelection
-    );
-    this.error$ = this.store$.select(UserStoreSelectors.selectUsers);
+    this.getState();
   }
 
+  fetchUsers() {
+    // SHOW LOADER
+    this.userService.fetchUsers().subscribe(
+      (res) => {
+        this.dataSource = new MatTableDataSource(res);
+        //HIDE LOADER
+      },
+      (err) => {
+        //HIDE LOADER
+        console.log(err);
+        this.snackBar.open(err.Message, '', { duration: 3500 });
+      }
+    );
+  }
+
+  getState() {
+    this.userSubscription = this.users$
+      .pipe(
+        map((state) => {
+          this.ngrxUsers = state.selectedUsers;
+          this.setSelection(state.selectedUsers);
+        })
+      )
+      .subscribe();
+  }
+
+  //GRID LOGIC
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -52,163 +81,36 @@ export class UserGridComponent implements OnInit {
     return numSelected == numRows;
   }
 
-  // Selects all rows if they are not all selected; otherwise clear selection
+  isSelected(id) {
+    return this.selection.selected.find((_) => _.id === id);
+  }
+
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
-  rowSelection() {
-    this.store$.dispatch(
-      new UserStoreActions.GridSelectUsers(this.selection.selected)
-    );
-    console.log('Selection', this.selection);
-  }
-  fetchUsers() {
-    // this.userService.fetchUsers().subscribe(
-    //   (res) => {
-    //     console.log(res);
-    //     this.users = res;
-    //   },
-    //   (err) => {}
-    // );
 
-    this.users = [
-      {
-        id: 147370,
-        first_name: 'Lili',
-        last_name: 'Marlen',
-        email: 'angular1@luptest.com',
-        sign_in_count: 0,
-        number_of_enrollments: 0,
-        number_of_enrollments_accessed: 0,
-        created_at: '2019-04-01T10:44:51Z',
-        last_sign_in_at: null,
-        account_expires: null,
-        sf_user_id: null,
-        sf_contact_id: null,
-        is_salesforce_contact: 0,
-        CustomData: null,
-        customDataFieldValues: [],
-        locale: 'en',
-        enabled: true,
-        user_type: 'manager',
-        can_enroll: true,
-        can_delete_users: true,
-        can_unenroll_users: true,
-        can_move_groups: true,
-        can_mark_complete: true,
-        tutor_can_edit_their_courses: false,
-        tutor_can_create_courses: false,
-      },
-      {
-        id: 147371,
-        first_name: 'John2',
-        last_name: 'Doe2',
-        email: 'angular2@luptest.com',
-        sign_in_count: 0,
-        number_of_enrollments: 0,
-        number_of_enrollments_accessed: 0,
-        created_at: '2019-04-01T10:44:51Z',
-        last_sign_in_at: null,
-        account_expires: null,
-        sf_user_id: null,
-        sf_contact_id: null,
-        is_salesforce_contact: 0,
-        CustomData: null,
-        customDataFieldValues: [],
-        locale: 'en',
-        enabled: true,
-        user_type: 'instructor',
-        can_enroll: true,
-        can_delete_users: false,
-        can_unenroll_users: false,
-        can_move_groups: false,
-        can_mark_complete: false,
-        tutor_can_edit_their_courses: true,
-        tutor_can_create_courses: true,
-      },
-      {
-        id: 147372,
-        first_name: 'John3',
-        last_name: 'Doe3',
-        email: 'angular3@luptest.com',
-        sign_in_count: 1,
-        number_of_enrollments: 0,
-        number_of_enrollments_accessed: 0,
-        created_at: '2019-04-01T10:44:51Z',
-        last_sign_in_at: '2019-04-05T14:20:04Z',
-        account_expires: null,
-        sf_user_id: null,
-        sf_contact_id: null,
-        is_salesforce_contact: 0,
-        CustomData: null,
-        customDataFieldValues: [],
-        locale: 'en',
-        enabled: true,
-        user_type: 'admin',
-        can_enroll: true,
-        can_delete_users: false,
-        can_unenroll_users: false,
-        can_move_groups: false,
-        can_mark_complete: false,
-        tutor_can_edit_their_courses: true,
-        tutor_can_create_courses: false,
-      },
-      {
-        id: 147373,
-        first_name: 'John4',
-        last_name: 'Doe4',
-        email: 'angular4@luptest.com',
-        sign_in_count: 0,
-        number_of_enrollments: 0,
-        number_of_enrollments_accessed: 0,
-        created_at: '2019-04-01T10:44:51Z',
-        last_sign_in_at: null,
-        account_expires: null,
-        sf_user_id: null,
-        sf_contact_id: null,
-        is_salesforce_contact: 0,
-        CustomData: null,
-        customDataFieldValues: [],
-        locale: 'en',
-        enabled: true,
-        user_type: 'learner',
-        can_enroll: true,
-        can_delete_users: false,
-        can_unenroll_users: false,
-        can_move_groups: false,
-        can_mark_complete: false,
-        tutor_can_edit_their_courses: true,
-        tutor_can_create_courses: false,
-      },
-      {
-        id: 147374,
-        first_name: 'John5',
-        last_name: 'Doe5',
-        email: 'angular5@luptest.com',
-        sign_in_count: 0,
-        number_of_enrollments: 0,
-        number_of_enrollments_accessed: 0,
-        created_at: '2019-04-01T10:44:51Z',
-        last_sign_in_at: null,
-        account_expires: null,
-        sf_user_id: null,
-        sf_contact_id: null,
-        is_salesforce_contact: 0,
-        CustomData: null,
-        customDataFieldValues: [],
-        locale: 'en',
-        enabled: true,
-        user_type: 'learner',
-        can_enroll: true,
-        can_delete_users: false,
-        can_unenroll_users: false,
-        can_move_groups: false,
-        can_mark_complete: false,
-        tutor_can_edit_their_courses: true,
-        tutor_can_create_courses: false,
-      },
-    ];
+  rowSelection() {
+    this.store.dispatch(
+      UserActions.USER_SELECTION({ payload: this.selection.selected })
+    );
+  }
+
+  toggleSelection(user: User) {
+    if (this.isSelected(user.id)) {
+      let filterdSelection = this.selection.selected.filter(
+        (_) => _.id !== user.id
+      );
+      this.setSelection(filterdSelection);
+    } else this.setSelection([...this.selection.selected, user]);
+  }
+
+  setSelection(users: User[], multiple = true) {
+    this.selection = new SelectionModel<User>(multiple, users);
+  }
+
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe;
   }
 }

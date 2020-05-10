@@ -15,7 +15,7 @@ export class EssentialDirective {
     this.renderer.setStyle(
       this.el.nativeElement,
       'left',
-      this.random(1, 90) + '%'
+      this.random(10, 90) + '%'
     );
   }
 
